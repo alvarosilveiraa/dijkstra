@@ -6,7 +6,7 @@ class HeapMin {
 
 	insert(val) {
 		let index = this.count++;
-		this.heap.push(val);
+		this.heap[this.count] = val;
 		while(index > 1 && this.heap[index] > this.heap[index / 2]) {
 			this.trade(index, index / 2);
 			index = index / 2;
@@ -33,7 +33,7 @@ class HeapMin {
 					}
 					next = false;
 				}else {
-					let priority = getPriority(index);
+					let priority = this.getPriority(index);
 					if(this.heap[index] < this.heap[priority]) {
 						this.trade(index, priority);
 						index = priority;

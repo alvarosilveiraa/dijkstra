@@ -1,6 +1,4 @@
 let dijkstra = new Dijkstra();
-dijkstra.insert('a', 'b', 50);
-dijkstra.ini();
 
 
 

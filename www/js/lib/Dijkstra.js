@@ -1,8 +1,10 @@
 class Dikstra {
-	constructor() {
+	constructor(vertices, arestas) {
+		this.vertices = vertices || 0;
+		this.arestas = arestas || 0;
 		this.base = [];
-		this.distances = {};
 		this.links = {};
+		this.distances = {};
 	}
 
 	//public
