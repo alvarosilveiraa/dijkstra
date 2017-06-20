@@ -1,6 +1,13 @@
 let dijkstra = new Dijkstra();
 
 
+dikstra.insert('A', 'B', 10)
+dikstra.insert('A', 'D', 30)
+dikstra.insert('A', 'E', 100)
+dikstra.insert('B', 'C', 50)
+dikstra.insert('C', 'E', 10)
+dikstra.insert('D', 'C', 20)
+dikstra.insert('D', 'E', 60)
 
 
 // distances
@@ -39,14 +46,14 @@ let dijkstra = new Dijkstra();
 	'y': Infinity
 }
 
-while(heap) {
+// while(heap) {
 	// let lass
 	// for(let i; heap)
 	// distances[lass] + (distance)origin[lass]-destination[i] < distances[i]
 	// distances[i] = distances[less] + (distance)origin[less]-destination[i]
 	// links[i] = less
 	// update heap[i] = distances[i]
-}
+// }
 
 
 /****************************/
