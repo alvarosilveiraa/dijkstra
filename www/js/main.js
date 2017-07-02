@@ -1,137 +1,92 @@
-let dijkstra = new Dijkstra();
+class Main {
+  constructor() {
+    this.step = 0;
+    this.dijkstra = null;
+    this.form = document.querySelector("form");
+    this.input = this.form.querySelector("input");
+    this.input.focus();
+    this.btnUpload = this.form.querySelector(".btn-upload");
+    this.content = document.querySelector(".content");
+    this.contentIn = this.content.querySelector(".in");
+    this.contentOut = this.content.querySelector(".out");
+  }
 
+  submit(e) {
+    e.preventDefault();
+    this._showContent();
+    this.input.value = this.input.value.toUpperCase();
+    if(this.step == 0) {
+      try {
+        this.dijkstra = new Dijkstra(...this.input.value.split(' '));
+      }catch(e) {return alert(e)}
+    }else {
+      if(this.step <= this.dijkstra.arestas) {
+        this.dijkstra.push(...this.input.value.split(' '));
+      }else {
+        this.dijkstra.init(this.input.value);
+        this._setOut(this.input.value);
+        this.input.setAttribute("disabled", '');
+        this.btnUpload.setAttribute("disabled", '');
+        this.step = 0;
+      }
+    }
+    this._setIn(this.input.value);
+    this.input.value = '';
+    this.step++;
+  }
 
-dikstra.insert('A', 'B', 10)
-dikstra.insert('A', 'D', 30)
-dikstra.insert('A', 'E', 100)
-dikstra.insert('B', 'C', 50)
-dikstra.insert('C', 'E', 10)
-dikstra.insert('D', 'C', 20)
-dikstra.insert('D', 'E', 60)
+  clear() {
+    this.form.removeAttribute("style");
+    this.content.removeAttribute("style");
+    this.contentIn.innerHTML = "<h4>Entrada</h4>";
+    this.contentOut.innerHTML = "<h4>Saída</h4>";
+    this.input.removeAttribute("disabled");
+    this.btnUpload.removeAttribute("disabled");
+    this.input.focus();
+    this.step = 0;
+  }
 
+  upload() {
+    let input = document.createElement("input");
+    input.setAttribute("type", "file");
+    input.addEventListener("change", e => {
+      let reader = new FileReader();
+      reader.onload = function() {
+        this._showContent();
+        let result = reader.result.split('\n');
+        for(let i = 0; i < result.length; i++) {
+          if(result[i]) {
+            this.input.value = result[i];
+            this.submit(e);
+          }
+        }
+      }.bind(this)
+      reader.readAsText(input.files[0]);
+    })
+    input.click();
+    return false;
+  }
 
-// distances
-{
-	's': 0,
-	'2': Infinity,
-	'6': Infinity,
-	'7': Infinity,
-	'3': Infinity,
-	'5': Infinity,
-	'4': Infinity,
-	'y': Infinity
+  _showContent() {
+    this.form.style.top = "120px";
+    this.content.style.opacity = '1';
+  }
+
+  _setIn(text) {
+    let p = document.createElement('p');
+    p.textContent = text;
+    this.contentIn.appendChild(p);
+  }
+
+  _setOut(head) {
+    for(let i = 0; i < this.dijkstra.vertices; i++) {
+      let key = Object.keys(this.dijkstra.distances)[i];
+      let value = this.dijkstra.distances[key];
+      if(value == 0 || value == Infinity) continue;
+      let p = document.createElement('p');
+      p.textContent = `Distância de ${head} até ${key}: ${value} km`;
+      this.contentOut.appendChild(p);
+    }
+  }
 }
-
-// links
-{
-	's': '',
-	'2': '',
-	'6': '',
-	'7': '',
-	'3': '',
-	'5': '',
-	'4': '',
-	'y': ''
-}
-
-// heap
-{
-	's': 0,
-	'2': Infinity,
-	'6': Infinity,
-	'7': Infinity,
-	'3': Infinity,
-	'5': Infinity,
-	'4': Infinity,
-	'y': Infinity
-}
-
-// while(heap) {
-	// let lass
-	// for(let i; heap)
-	// distances[lass] + (distance)origin[lass]-destination[i] < distances[i]
-	// distances[i] = distances[less] + (distance)origin[less]-destination[i]
-	// links[i] = less
-	// update heap[i] = distances[i]
-// }
-
-
-/****************************/
-// base
-[
-	{
-		'origin': 's',
-		'destination': '2',
-		'distance': 9
-	},
-	{
-		'origin': 's',
-		'destination': '6',
-		'distance': 14
-	},
-	{
-		'origin': 's',
-		'destination': '7',
-		'distance': 15
-	},
-	{
-		'origin': '2',
-		'destination': '3',
-		'distance': 23
-	},
-	{
-		'origin': '6',
-		'destination': '3',
-		'distance': 18
-	},
-	{
-		'origin': '6',
-		'destination': '5',
-		'distance': 30
-	},
-	{
-		'origin': '6',
-		'destination': '7',
-		'distance': 5
-	},
-	{
-		'origin': '7',
-		'destination': '5',
-		'distance': 20
-	},
-	{
-		'origin': '7',
-		'destination': 't',
-		'distance': 44
-	},
-	{
-		'origin': '3',
-		'destination': '5',
-		'distance': 2
-	},
-	{
-		'origin': '3',
-		'destination': 't',
-		'distance': 19
-	},
-	{
-		'origin': '5',
-		'destination': '4',
-		'distance': 11
-	},
-	{
-		'origin': '5',
-		'destination': 't',
-		'distance': 16
-	},
-	{
-		'origin': '4',
-		'destination': '3',
-		'distance': '6'
-	},
-	{
-		'origin': '4',
-		'destination': 't',
-		'distance': 6
-	}
-]
+let main = new Main();

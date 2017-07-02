@@ -1,82 +1,70 @@
 class HeapMin {
-
-  constructor(cmp) {
-    this.cmp = cmp || this._cmpDefault;
-    this.items = [];
-    this.size = 0;
+  constructor(score) {
+    this.content = [];
+    this._score = score || function(x) {return x};
   }
 
-  insert(item) {
-    let i = this.size++;
-    this.items[i] = item;
-    let parent = (i - 1) >> 1;
-    while((parent > 0) && this.cmp(this.items[parent], item) > 0) {
-      this._swap(i, parent);
-      i = parent;
-      parent = (i - 1) >> 1;
-    }
-  }
-
-  update(item, newItem) {
-    for(let i = 0; i < this.size; i++) {
-      if(this.items[i] === item) {
-        this.items[i] = newItem;
-        return true;
-      }
-    }
-    return false;
+  push(node) {
+    this.content.push(node);
+    this._bubbleUp(this.content.length - 1);
   }
 
   pop() {
-    if(this.size === 0) return;
-    let head = this.items[0];
-    this._bubble(0);
+    let head = this.content[0];
+    let last = this.content.pop();
+    if(this.content.length > 0) {
+      this.content[0] = last;
+      this._bubbleDown(0);
+    }
     return head;
   }
 
-  remove(item) {
-    for(let i = 0; i < this.size; ++i) {
-      if(this.items[i] === item) {
-        this._bubble(i);
-        return true;
-      }
+  remove(node) {
+    for(let i = 0; i < this.content.length; i++) {
+      if(this.content[i] != node.name) continue;
+      let last = this.content.pop();
+      if(i == this.content.length - 1) break;
+      this.content[i] = last;
+      this._bubbleUp(i);
+      this._bubbleDown(i);
+      break;
     }
-    return false;
   }
 
-  _bubble(i) {
-    this.items[i] = this.items[--this.size];
-    this.items[this.size] = null;
+  _bubbleUp(index) {
+    let node = this.content[index]
+    while(index > 0) {
+      let parentIndex = Math.floor((index + 1) / 2) - 1;
+      let parent = this.content[parentIndex];
+      if(this._score(node) >= this._score(parent)) break;
+      this.content[parentIndex] = node;
+      this.content[index] = parent;
+      index = parentIndex;
+    }
+  }
 
+  _bubbleDown(index) {
+    let node = this.content[index];
     while(true) {
-      let left = (i << 1) + 1
-        , right = (i << 1) + 2
-        , min = i;
-
-      if(left < this.size && this.cmp(this.items[left], this.items[min]) < 0)
-        min = left;
-      else if(right < this.size && this.cmp(this.items[right], this.items[min]) < 0)
-        min = right;
-
-      if(min !== i) {
-        this._swap(i, min);
-        i = min;
-      }else {
-        break;
+      let min = null;
+      let childIndex = (index + 1) * 2;
+      if(childIndex - 1 < this.content.length) {
+        if(this._score(this.content[childIndex - 1]) < this._score(node))
+          min = childIndex - 1;
       }
+      if(childIndex < this.content.length) {
+        if(this._score(this.content[childIndex]) < (min == null? this._score(node): this._score(this.content[childIndex - 1])))
+          min = childIndex;
+      }
+      if(min == null) break;
+      this._swap(index, min);
+      index = min;
     }
   }
 
   _swap(i, j) {
-    let aux = this.items[i];
-    this.items[i] = this.items[j];
-    this.items[j] = aux;
-  }
-
-  _cmpDefault(x, y) {
-    // if(x < y) return -1
-    // else if(x > y) return 1
-    // else return 0;
-    return x - y;
+    let aux = this.content[i];
+    this.content[i] = this.content[j];
+    this.content[j] = aux;
   }
 }

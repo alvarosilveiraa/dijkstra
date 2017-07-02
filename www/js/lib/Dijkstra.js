@@ -1,68 +1,57 @@
-class Dikstra {
-
+class Dijkstra {
 	constructor(vertices, arestas) {
-    if(vertices > 10) throw new Error("...");
-    if(arestas > vertices * vertices) throw new Error("...");
-
-    this.vertices = vertices;
-    this.arestas = arestas;
+    if(vertices > 10) throw new Error("Máximo 10 vértices");
+    if(arestas > vertices * vertices) throw new Error("Máximo vértices² arestas");
+    this.vertices = Number(vertices);
+    this.arestas = Number(arestas);
     this.chars = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 		this.base = [];
-		this.links = {};
+		this.routes = {};
 		this.distances = {};
-    this.heap = new HeapMin(function(x, y) {
-      if(x.distance < y.distance) return -1
-      else if(x.distance > y.distance) return 1
-      else return 0;
-    });
+    this.heap = new HeapMin(node => node.distance);
 	}
 
-	init() {
-    this._startValues();
-    while(this.heap.size > 0) {
+	init(vertice='A') {
+    this._setValues(vertice);
+    while(this.heap.content.length > 0) {
       let head = this.heap.pop();
-      for(let i = 0; i < this.heap.size; i++) {
-        let heap = this.heap.items[i];
-        let item = this._getItem(head.name, heap.name);
-        if(item) {
-          let distance = this.distances[head.name] + item.distance;
+      for(let i = 0; i < this.heap.content.length; i++) {
+        let heap = this.heap.content[i];
+        let node = this._getNode(head.name, heap.name);
+        if(node) {
+          let distance = this.distances[head.name] + node.distance;
           if(distance < this.distances[heap.name]) {
             this.distances[heap.name] = distance;
-            this.links[heap.name] = head.name;
-            this.heap.update(heap, {name: heap.name, distance: distance});
+            this.routes[heap.name] = head.name;
+            this.heap.remove(heap);
+            this.heap.push({name: heap.name, distance: distance});
           }
         }
       }
     }
 	}
 
-	insert(origin, destination, distance) {
-    if(this.base.length < this.arestas) {
-  		this.base.push({
-  			origin: origin,
-  			destination: destination,
-  			distance: distance
-  		})
-    }
+	push(origin, destination, distance) {
+		this.base.push({
+			origin: origin,
+			destination: destination,
+			distance: Number(distance)
+		})
 	}
 
-  _startValues() {
-    if(this.vertices > 0) {
-      this.heap.insert({name: this.chars[0], distance: 0});
-      this.distances[this.chars[0]] = 0;
-      for(let i = 1; i < this.vertices; i++) {
-        this.distances[this.chars[i]] = Infinity;
-        this.heap.insert({name: this.chars[i], distance: Infinity});
-      }
+  _setValues(vertice) {
+    for(let i = 0; i < this.vertices; i++) {
+      let value;
+      if(this.chars[i] == vertice) value = 0;
+      else value = Infinity;
+      this.distances[this.chars[i]] = value;
+      this.heap.push({name: this.chars[i], distance: value});
     }
   }
 
-  _getItem(origin, destination) {
+  _getNode(origin, destination) {
     for(let i = 0; i < this.base.length; i++) {
-      if(
-        this.base[i].origin == origin && this.base[i].destination == destination ||
-        this.base[i].origin == destination && this.base[i].destination == origin
-      )
+      if(this.base[i].origin == origin && this.base[i].destination == destination)
         return this.base[i];
     }
     return null;
