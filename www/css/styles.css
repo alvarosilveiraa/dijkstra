@@ -66,7 +66,7 @@ main form input {
   box-shadow: 0 2px 1px rgba(0, 0, 0, 0.2);
 }
 
-main form input[disabled], .btn-upload[disabled] {
+main form input[disabled], .btn-clear[disabled], .btn-upload[disabled] {
   cursor: not-allowed;
   background-color: transparent;
   box-shadow: none;

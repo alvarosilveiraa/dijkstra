@@ -5,6 +5,7 @@ class Main {
     this.form = document.querySelector("form");
     this.input = this.form.querySelector("input");
     this.input.focus();
+    this.btnClear = this.form.querySelector(".btn-clear");
     this.btnUpload = this.form.querySelector(".btn-upload");
     this.content = document.querySelector(".content");
     this.contentIn = this.content.querySelector(".in");
@@ -17,6 +18,8 @@ class Main {
     this.input.value = this.input.value.toUpperCase();
     if(this.step == 0) {
       try {
+        this.btnClear.removeAttribute("disabled");
+        this.btnUpload.setAttribute("disabled", '');
         this.dijkstra = new Dijkstra(...this.input.value.split(' '));
       }catch(e) {return alert(e)}
     }else {
@@ -26,7 +29,6 @@ class Main {
         this.dijkstra.init(this.input.value);
         this._setOut(this.input.value);
         this.input.setAttribute("disabled", '');
-        this.btnUpload.setAttribute("disabled", '');
         this.step = 0;
       }
     }
@@ -41,6 +43,7 @@ class Main {
     this.contentIn.innerHTML = "<h4>Entrada</h4>";
     this.contentOut.innerHTML = "<h4>Saída</h4>";
     this.input.removeAttribute("disabled");
+    this.btnClear.setAttribute("disabled", '');
     this.btnUpload.removeAttribute("disabled");
     this.input.focus();
     this.step = 0;
